@@ -1,7 +1,7 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  edge_functions = "funções-de-borda"
 
 [functions]
   node_bundler = "esbuild"
-edge_functions = "edge-functions"
