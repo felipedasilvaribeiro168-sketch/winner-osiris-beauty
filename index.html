@@ -181,4 +181,32 @@ render();update();
 <script>
 (function(){const a=document.getElementById('osirisLoungeAudio'),b=document.getElementById('osirisLoungeBtn');if(!a||!b)return;a.volume=.16;b.addEventListener('click',async()=>{try{if(a.paused){await a.play();b.classList.add('playing');b.textContent='❚❚';b.title='Pausar música'}else{a.pause();b.classList.remove('playing');b.textContent='♫';b.title='Ativar música'}}catch(e){}});})();
 </script>
+<script>
+(function(){
+  const base='/imagens/';
+  const imageMap={10:'1788638714094.png',11:'1788638821534.png',12:'1788638850704.png',13:'1788638885549.png',14:'1788639014912.png',15:'1788639225408.png',16:'1788639325585.png',17:'1788639375887.png',18:'1788639423750.png',19:'1788639685643.png',20:'1788639865620.png',21:'1788640203709.png'};
+  function localOrder(id){try{return JSON.parse(localStorage.getItem('osirisOrders')||'[]').find(o=>o.id===id)}catch(e){return null}}
+  window.openTracking=function(id=''){
+    const box=document.getElementById('trackingOverlay'), input=document.getElementById('trackingInput');
+    if(!box||!input)return; box.classList.add('open'); input.value=id; if(id) window.lookupOrder();
+  };
+  window.lookupOrder=async function(){
+    const input=document.getElementById('trackingInput'), result=document.getElementById('trackingResult');
+    const id=(input?.value||'').trim().toUpperCase(); if(!result)return;
+    if(!id){result.innerHTML='<p style="color:#a59ca6;font-size:12px">Digite o número do pedido.</p>';return}
+    let order=localOrder(id);
+    if(!order){try{const r=await fetch('/api/orders?id='+encodeURIComponent(id));if(r.ok)order=await r.json()}catch(e){}}
+    if(!order){result.innerHTML='<p style="color:#a59ca6;font-size:12px">Não encontrei esse pedido. Confira o código do comprovante.</p>';return}
+    if(typeof renderTracking==='function')renderTracking(order);
+  };
+  function boot(){
+    if(typeof products!=='undefined'){
+      products.forEach(p=>{if(imageMap[p.id])p.img=base+imageMap[p.id]});
+      if(typeof render==='function')render();
+    }
+    const b=document.querySelector('#trackingOverlay button.small-btn.primary'); if(b)b.onclick=window.lookupOrder;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
 </body></html>
