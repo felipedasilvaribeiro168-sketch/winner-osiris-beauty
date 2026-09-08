@@ -1,31 +1,7 @@
-// Cloudflare Pages global middleware
-// Carrega o osiris-fix.js sem alterar o index.html gigante.
+// Cloudflare Pages Middleware
+// Mantém as páginas e arquivos do site intactos.
+// O antigo osiris-fix.js NÃO deve mais ser injetado.
 
 export async function onRequest(context) {
-  const response = await context.next();
-
-  const url = new URL(context.request.url);
-
-  // Não modifica as rotas da API
-  if (url.pathname.startsWith("/api/")) {
-    return response;
-  }
-
-  const contentType = response.headers.get("content-type") || "";
-
-  // Só modifica páginas HTML
-  if (!contentType.toLowerCase().includes("text/html")) {
-    return response;
-  }
-
-  return new HTMLRewriter()
-    .on("head", {
-      element(element) {
-        element.append(
-          '<script src="/osiris-fix.js" defer></script>',
-          { html: true }
-        );
-      },
-    })
-    .transform(response);
+  return context.next();
 }
