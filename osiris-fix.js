@@ -674,15 +674,53 @@
       1000
     );
   }
+function fixSpecificCatalog() {
+  getCards().forEach(card => {
+    const raw = (card.innerText || card.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim();
 
-  function run() {
+    const t = raw.toLowerCase();
+
+    // Delineadores
+    if (/delineador|deliniador|eyeliner/.test(t)) {
+      card.dataset.category = "Delineadores";
+      card.dataset.categoria = "Delineadores";
+      card.setAttribute("data-category", "Delineadores");
+    }
+
+    const images = [...card.querySelectorAll("img")];
+
+    // Pincel Osiris Precision
+    if (t.includes("pincel osiris precision")) {
+      images.forEach(img => {
+        img.src = "imagens/pincel4.png";
+        img.removeAttribute("srcset");
+      });
+    }
+
+    // Kit Pincéis Osiris
+    if (
+      t.includes("kit pincéis osiris") ||
+      t.includes("kit pinceis osiris")
+    ) {
+      images.forEach(img => {
+        img.src = "imagens/kit%20pincel2.png";
+        img.removeAttribute("srcset");
+      });
+    }
+  });
+}
+
+function run() {
 
     fixFilters();
     fixProducts();
+    fixSpecificCatalog();
     removeNetlifyMessage();
     ambassadors();
 
-  }
+}
 
   if (
     document.readyState ===
